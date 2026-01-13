@@ -58,7 +58,7 @@ Friends are welcome, 欢迎扩列，友達追加を歓迎します!
 
 ---
 
-## GitHub Stats (More)
+## GitHub Stats
 <details>
   <summary>Click to expand</summary>
   <br/>
