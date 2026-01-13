@@ -1,0 +1,104 @@
+name: Simple Stats Card
+on:
+  schedule:
+    - cron: "0 3 * * *" # 每天更新一次（UTC 3点）
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Generate stats card (SVG)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          USERNAME: itsraindi
+          TITLE: "Amemaru's GitHub Stats"
+        run: |
+          python - << 'PY'
+          import os, json, urllib.request
+          from datetime import datetime, timedelta, timezone
+
+          token = os.environ["GITHUB_TOKEN"]
+          username = os.environ.get("USERNAME", "").strip()
+          title = os.environ.get("TITLE", "GitHub Stats")
+
+          def gql(query, variables):
+            data = json.dumps({"query": query, "variables": variables}).encode("utf-8")
+            req = urllib.request.Request(
+              "https://api.github.com/graphql",
+              data=data,
+              headers={
+                "Authorization": f"bearer {token}",
+                "Content-Type": "application/json",
+                "User-Agent": "stats-card-generator"
+              }
+            )
+            with urllib.request.urlopen(req) as r:
+              return json.loads(r.read().decode("utf-8"))
+
+          now = datetime.now(timezone.utc)
+          frm = (now - timedelta(days=365)).isoformat()
+          to = now.isoformat()
+
+          query = """
+          query($login:String!, $from:DateTime!, $to:DateTime!, $after:String) {
+            user(login:$login) {
+              pullRequests { totalCount }
+              issues { totalCount }
+              contributionsCollection(from:$from, to:$to) {
+                totalCommitContributions
+                totalPullRequestContributions
+                totalIssueContributions
+                totalRepositoryContributions
+              }
+              repositories(ownerAffiliations: OWNER, isFork:false, first:100, after:$after) {
+                nodes { stargazerCount }
+                pageInfo { hasNextPage endCursor }
+              }
+            }
+          }
+          """
+
+          total_stars = 0
+          after = None
+
+          while True:
+            res = gql(query, {"login": username, "from": frm, "to": to, "after": after})
+            if "errors" in res:
+              raise SystemExit("GraphQL error: " + json.dumps(res["errors"], indent=2))
+
+            u = res["data"]["user"]
+            prs_total = u["pullRequests"]["totalCount"]
+            issues_total = u["issues"]["totalCount"]
+            cc = u["contributionsCollection"]
+            commits_last_year = cc["totalCommitContributions"]
+            repos_contrib_last_year = cc["totalRepositoryContributions"]
+
+            repo = u["repositories"]
+            total_stars += sum(n["stargazerCount"] for n in repo["nodes"])
+            if not repo["pageInfo"]["hasNextPage"]:
+              break
+            after = repo["pageInfo"]["endCursor"]
+
+          def fmt_k(n):
+            if n >= 1000000: return f"{n/1000000:.1f}M".replace(".0","")
+            if n >= 1000: return f"{n/1000:.1f}k".replace(".0","")
+            return str(n)
+
+          activity = commits_last_year
+          if activity >= 500: grade = "A+"
+          elif activity >= 300: grade = "A"
+          elif activity >= 200: grade = "B+"
+          elif activity >= 100: grade = "B"
+          elif activity >= 50: grade = "C"
+          else: grade = "D"
+
+          W, H = 760, 180
+          pad = 26
