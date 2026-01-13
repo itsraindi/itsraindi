@@ -4,6 +4,7 @@
 
 <p>
 A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>, and <b>video games</b>.
+欢迎扩列，友達追加を歓迎します，Welcome friends!
 </p>
 
 <p>
