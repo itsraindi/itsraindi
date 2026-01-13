@@ -1,7 +1,8 @@
 name: Simple Stats Card
+
 on:
   schedule:
-    - cron: "0 3 * * *"   # UTC 03:00
+    - cron: "0 3 * * *" # daily at 03:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -23,7 +24,7 @@ jobs:
           USERNAME: itsraindi
           TITLE: "Amemaru's GitHub Stats"
         run: |
-          python - <<'PY'
+          cat > gen.py <<'PY'
           import os, json, urllib.request
           from datetime import datetime, timedelta, timezone
 
@@ -68,7 +69,6 @@ jobs:
 
           total_stars = 0
           after = None
-          prs_total = issues_total = commits_last_year = repos_contrib_last_year = 0
 
           while True:
             res = gql(query, {"login": username, "from": frm, "to": to, "after": after})
@@ -88,20 +88,32 @@ jobs:
               break
             after = repo["pageInfo"]["endCursor"]
 
-          def fmt_k(n):
-            if n >= 1000000: return f"{n/1000000:.1f}M".replace(".0","")
-            if n >= 1000: return f"{n/1000:.1f}k".replace(".0","")
+          def fmt_k(n: int) -> str:
+            if n >= 1_000_000:
+              return f"{n/1_000_000:.1f}M".replace(".0", "")
+            if n >= 1_000:
+              return f"{n/1_000:.1f}k".replace(".0", "")
             return str(n)
 
+          # simple grade by commits last year
           activity = commits_last_year
-          grade = "A+" if activity >= 500 else "A" if activity >= 300 else "B+" if activity >= 200 else "B" if activity >= 100 else "C"
+          if activity >= 500: grade = "A+"
+          elif activity >= 300: grade = "A"
+          elif activity >= 200: grade = "B+"
+          elif activity >= 100: grade = "B"
+          elif activity >= 50: grade = "C"
+          else: grade = "D"
 
+          # SVG layout
           W, H = 760, 180
           pad = 26
-          accent = "#2f80ed"
+
+          card_bg = "#ffffff"
           border = "#e5e7eb"
-          text  = "#111827"
-          sub   = "#374151"
+          title_color = "#2f80ed"
+          text_color = "#111827"
+          sub_color = "#374151"
+          accent = "#2f80ed"
 
           lines = [
             ("Total Stars Earned:", fmt_k(total_stars)),
@@ -112,21 +124,29 @@ jobs:
           ]
 
           y0, dy = 78, 24
-          svg = [f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
-          <rect x="10" y="10" width="{W-20}" height="{H-20}" rx="16" fill="#ffffff" stroke="{border}"/>
-          <text x="{pad}" y="44" font-family="Segoe UI, Arial" font-size="20" font-weight="700" fill="{accent}">{title}</text>
-          ''']
+          value_x = 420
 
-          for i,(k,v) in enumerate(lines):
+          svg = []
+          svg.append(f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
+            <defs>
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000000" flood-opacity="0.12"/>
+              </filter>
+            </defs>
+            <rect x="10" y="10" width="{W-20}" height="{H-20}" rx="16" fill="{card_bg}" stroke="{border}" filter="url(#shadow)"/>
+            <text x="{pad}" y="44" font-family="Segoe UI, Arial" font-size="20" font-weight="700" fill="{title_color}">{title}</text>
+          ''')
+
+          for i, (k, v) in enumerate(lines):
             y = y0 + i*dy
             svg.append(f'<circle cx="{pad+6}" cy="{y-5}" r="5" fill="{accent}" opacity="0.9"/>')
-            svg.append(f'<text x="{pad+26}" y="{y}" font-family="Segoe UI, Arial" font-size="14" fill="{sub}">{k}</text>')
-            svg.append(f'<text x="420" y="{y}" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="{text}">{v}</text>')
+            svg.append(f'<text x="{pad+26}" y="{y}" font-family="Segoe UI, Arial" font-size="14" fill="{sub_color}">{k}</text>')
+            svg.append(f'<text x="{value_x}" y="{y}" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="{text_color}">{v}</text>')
 
-          cx, cy = W-120, 95
+          cx, cy = W - 120, 95
           svg.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="none" stroke="{accent}" stroke-width="10" opacity="0.35"/>')
           svg.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="none" stroke="{accent}" stroke-width="10" stroke-dasharray="220 60" stroke-linecap="round"/>')
-          svg.append(f'<text x="{cx}" y="{cy+8}" text-anchor="middle" font-family="Segoe UI, Arial" font-size="28" font-weight="800" fill="{text}">{grade}</text>')
+          svg.append(f'<text x="{cx}" y="{cy+8}" text-anchor="middle" font-family="Segoe UI, Arial" font-size="28" font-weight="800" fill="{text_color}">{grade}</text>')
           svg.append('</svg>')
 
           with open("simple-stats.svg", "w", encoding="utf-8") as f:
@@ -135,6 +155,7 @@ jobs:
           print("Wrote simple-stats.svg")
           PY
 
+          python gen.py
           ls -la
           test -f simple-stats.svg
 
