@@ -69,16 +69,18 @@ Friends are welcome, 欢迎扩列，友達追加を歓迎します!
 
 ---
 
-## 
+##
 <p align="center">
   <a href="https://learn.microsoft.com/zh-cn/cpp/cpp/welcome-back-to-cpp-modern-cpp">
     <img src="https://img.shields.io/badge/code-Modern%20C++-blue" alt="Modern C++" />
   </a>
-  <img src="https://img.shields.io/badge/%E8%AE%A8%E5%8E%8C-%E5%AD%A6%E4%B9%A0-yellow" alt="状态 学习中" />
-  <img src="https://img.shields.io/badge/%E6%80%A7%E6%A0%BC-%E5%BC%80%E6%9C%97-red" alt="日常 在写Bug" />
-  <img src="https://img.shields.io/badge/%E7%88%B1%E5%A5%BD-%E4%BA%8C%E6%AC%A1%E5%85%83-pink" alt="兴趣 二次元" />
-  <img src="https://img.shields.io/badge/%E7%88%B1%E5%A5%BD-%E4%BA%8C%E6%AC%A1%E5%85%83-blue" alt="目标 慢慢变强" />
+
+  <img src="https://img.shields.io/badge/%E7%8A%B6%E6%80%81-%E5%AD%A6%E4%B9%A0%E4%B8%AD-lightgrey" alt="状态 学习中" />
+  <img src="https://img.shields.io/badge/%E6%97%A5%E5%B8%B8-%E5%9C%A8%E5%86%99Bug-yellow" alt="日常 在写Bug" />
+  <img src="https://img.shields.io/badge/%E4%B8%BB%E7%BA%BF-%E5%81%9A%E6%B8%B8%E6%88%8F-orange" alt="主线 做游戏" />
+  <img src="https://img.shields.io/badge/%E5%85%B4%E8%B6%A3-%E4%BA%8C%E6%AC%A1%E5%85%83-ff69b4" alt="兴趣 二次元" />
 </p>
+>
 
 <!-- Optional: put your avatar here (make sure the file exists in this repo)
 <img src="images/avatar.jpg" width="120" />
