@@ -16,10 +16,9 @@ A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>
 </div>
 
 ---
-
-<table>
+<table width="100%">
 <tr>
-<td valign="top" width="52%">
+<td valign="top" width="55%">
 
 ## Now
 - 🔭 Working on **Project Midnight Umbrella**
@@ -29,9 +28,9 @@ A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>
 - 📫 Reach me at **contact@ame.best**
 
 </td>
-<td valign="top" width="48%">
+<td valign="top" width="45%">
 
-<img src="https://raw.githubusercontent.com/itsraindi/itsraindi/main/assets/simple-stats.svg" width="100%" />
+<img src="https://raw.githubusercontent.com/itsraindi/itsraindi/main/assets/simple-stats.svg?v=1" width="100%" />
 
 </td>
 </tr>
