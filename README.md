@@ -30,7 +30,7 @@ A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>
 </td>
 <td valign="top" width="45%">
 
-<img src="https://raw.githubusercontent.com/itsraindi/itsraindi/main/assets/simple-stats.svg?v=1" width="100%" />
+<img src="https://raw.githubusercontent.com/itsraindi/itsraindi/main/simple-stats.svg?v=1" width="100%" />
 
 </td>
 </tr>
