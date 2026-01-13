@@ -17,12 +17,25 @@ A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>
 
 ---
 
+<table>
+<tr>
+<td valign="top" width="52%">
+
 ## Now
 - 🔭 Working on **Project Midnight Umbrella**
 - 🌱 Learning **Java & Android Studio**
 - 🤝 Looking to collaborate on **Game Design (UofA CMPUT 250)**
 - 💬 Ask me about **anything**
 - 📫 Reach me at **contact@ame.best**
+
+</td>
+<td valign="top" width="48%">
+
+<img src="https://raw.githubusercontent.com/itsraindi/itsraindi/main/assets/simple-stats.svg" width="100%" />
+
+</td>
+</tr>
+</table>
 
 ---
 
