@@ -1,6 +1,6 @@
 <div align="center">
 
-<h1>Hi 👋, this is Amemaru</h1>
+<h1>Hi 👋, this is Amemaru ：）</h1>
 
 <p>
 A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>, and <b>video games</b>.<br/>
