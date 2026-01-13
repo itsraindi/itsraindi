@@ -1,7 +1,7 @@
 name: Simple Stats Card
 on:
   schedule:
-    - cron: "0 3 * * *" # 每天更新一次（UTC 3点）
+    - cron: "0 3 * * *"
   workflow_dispatch:
 
 permissions:
@@ -14,8 +14,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: main
+          persist-credentials: true
 
-      - name: Generate stats card (SVG)
+      - name: Generate simple-stats.svg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           USERNAME: itsraindi
@@ -26,7 +27,7 @@ jobs:
           from datetime import datetime, timedelta, timezone
 
           token = os.environ["GITHUB_TOKEN"]
-          username = os.environ.get("USERNAME", "").strip()
+          username = os.environ["USERNAME"].strip()
           title = os.environ.get("TITLE", "GitHub Stats")
 
           def gql(query, variables):
@@ -37,7 +38,7 @@ jobs:
               headers={
                 "Authorization": f"bearer {token}",
                 "Content-Type": "application/json",
-                "User-Agent": "stats-card-generator"
+                "User-Agent": "simple-stats-card"
               }
             )
             with urllib.request.urlopen(req) as r:
@@ -102,3 +103,60 @@ jobs:
 
           W, H = 760, 180
           pad = 26
+          title_color = "#2f80ed"
+          text_color = "#111827"
+          sub_color = "#374151"
+          card_bg = "#ffffff"
+          border = "#e5e7eb"
+          accent = "#2f80ed"
+
+          lines = [
+            ("Total Stars Earned:", fmt_k(total_stars)),
+            ("Total Commits (last year):", fmt_k(commits_last_year)),
+            ("Total PRs:", fmt_k(prs_total)),
+            ("Total Issues:", fmt_k(issues_total)),
+            ("Contributed to (last year):", fmt_k(repos_contrib_last_year)),
+          ]
+
+          icon_x = pad + 6
+          label_x = pad + 26
+          value_x = 420
+          start_y = 66
+          dy = 24
+
+          svg = []
+          svg.append(f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
+            <defs>
+              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000000" flood-opacity="0.12"/>
+              </filter>
+            </defs>
+            <rect x="10" y="10" width="{W-20}" height="{H-20}" rx="16" fill="{card_bg}" stroke="{border}" filter="url(#shadow)"/>
+            <text x="{pad}" y="44" font-family="Segoe UI, Arial" font-size="20" font-weight="700" fill="{title_color}">{title}</text>
+          ''')
+
+          for i, (k, v) in enumerate(lines):
+            y = start_y + i*dy
+            svg.append(f'<circle cx="{icon_x}" cy="{y-5}" r="5" fill="{accent}" opacity="0.9"/>')
+            svg.append(f'<text x="{label_x}" y="{y}" font-family="Segoe UI, Arial" font-size="14" fill="{sub_color}">{k}</text>')
+            svg.append(f'<text x="{value_x}" y="{y}" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="{text_color}">{v}</text>')
+
+          cx, cy = W-120, 95
+          svg.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="none" stroke="{accent}" stroke-width="10" opacity="0.35"/>')
+          svg.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="none" stroke="{accent}" stroke-width="10" stroke-dasharray="220 60" stroke-linecap="round"/>')
+          svg.append(f'<text x="{cx}" y="{cy+8}" text-anchor="middle" font-family="Segoe UI, Arial" font-size="28" font-weight="800" fill="{text_color}">{grade}</text>')
+          svg.append('</svg>')
+
+          with open("simple-stats.svg", "w", encoding="utf-8") as f:
+            f.write("\n".join(svg))
+
+          print("Wrote simple-stats.svg")
+          PY
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add simple-stats.svg
+          git diff --cached --quiet || git commit -m "chore: update simple stats card"
+          git push
