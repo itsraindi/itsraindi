@@ -69,7 +69,6 @@ jobs:
 
           total_stars = 0
           after = None
-
           while True:
             res = gql(query, {"login": username, "from": frm, "to": to, "after": after})
             if "errors" in res:
@@ -149,14 +148,17 @@ jobs:
 
           with open("simple-stats.svg", "w", encoding="utf-8") as f:
             f.write("\n".join(svg))
-
           print("Wrote simple-stats.svg")
           PY
+
+          test -f simple-stats.svg
+          ls -la
 
       - name: Commit & push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add simple-stats.svg
+          git add -A
+          git status --porcelain
           git diff --cached --quiet || git commit -m "chore: update simple stats card"
           git push
