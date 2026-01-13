@@ -5,7 +5,7 @@
 
 <p align="left"> <a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=itsraindi" alt="itsraindi" /></a> </p>
 
-- 🔭 I’m currently working on **Midnight Umbrella**
+- 🔭 I’m currently working on **Project Midnight Umbrella**
 
 - 🌱 I’m currently learning **Java & Android Studio**
 
