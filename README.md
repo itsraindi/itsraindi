@@ -68,7 +68,7 @@ A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>
 
 ---
 
-## Fun badges
+## 
 <p align="center">
   <a href="https://learn.microsoft.com/zh-cn/cpp/cpp/welcome-back-to-cpp-modern-cpp">
     <img src="https://img.shields.io/badge/code-Modern%20C++-blue" alt="Modern C++" />
