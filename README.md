@@ -3,9 +3,10 @@
 <h1>Hi 👋, this is Amemaru</h1>
 
 <p>
-A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>, and <b>video games</b>.
-欢迎扩列，友達追加を歓迎します，Welcome friends!
+A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>, and <b>video games</b>.<br/>
+Friends are welcome, 欢迎扩列，友達追加を歓迎します!
 </p>
+
 
 <p>
   <a href="mailto:contact@ame.best">Email</a> ·
