@@ -80,7 +80,6 @@ Friends are welcome, 欢迎扩列，友達追加を歓迎します!
   <img src="https://img.shields.io/badge/%E4%B8%BB%E7%BA%BF-%E5%81%9A%E6%B8%B8%E6%88%8F-orange" alt="主线 做游戏" />
   <img src="https://img.shields.io/badge/%E5%85%B4%E8%B6%A3-%E4%BA%8C%E6%AC%A1%E5%85%83-ff69b4" alt="兴趣 二次元" />
 </p>
->
 
 <!-- Optional: put your avatar here (make sure the file exists in this repo)
 <img src="images/avatar.jpg" width="120" />
