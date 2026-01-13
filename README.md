@@ -9,7 +9,7 @@
 
 - 🌱 I’m currently learning **Java & Android Studio**
 
-- 👯 I’m looking to collaborate on **CMPUT 250**
+- 👯 I’m looking to collaborate on **Game Design with UofA CMPUT 250**
 
 - 💬 Ask me about **Anything**
 
