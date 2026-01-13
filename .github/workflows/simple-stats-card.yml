@@ -1,7 +1,7 @@
 name: Simple Stats Card
 on:
   schedule:
-    - cron: "0 3 * * *"
+    - cron: "0 3 * * *"   # UTC 03:00
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ jobs:
           USERNAME: itsraindi
           TITLE: "Amemaru's GitHub Stats"
         run: |
-          python - << 'PY'
+          python - <<'PY'
           import os, json, urllib.request
           from datetime import datetime, timedelta, timezone
 
@@ -47,7 +47,7 @@ jobs:
 
           now = datetime.now(timezone.utc)
           frm = (now - timedelta(days=365)).isoformat()
-          to = now.isoformat()
+          to  = now.isoformat()
 
           query = """
           query($login:String!, $from:DateTime!, $to:DateTime!, $after:String) {
@@ -68,6 +68,8 @@ jobs:
 
           total_stars = 0
           after = None
+          prs_total = issues_total = commits_last_year = repos_contrib_last_year = 0
+
           while True:
             res = gql(query, {"login": username, "from": frm, "to": to, "after": after})
             if "errors" in res:
@@ -87,28 +89,45 @@ jobs:
             after = repo["pageInfo"]["endCursor"]
 
           def fmt_k(n):
+            if n >= 1000000: return f"{n/1000000:.1f}M".replace(".0","")
             if n >= 1000: return f"{n/1000:.1f}k".replace(".0","")
             return str(n)
 
-          grade = "A+" if commits_last_year >= 500 else "A" if commits_last_year >= 300 else "B+"
+          activity = commits_last_year
+          grade = "A+" if activity >= 500 else "A" if activity >= 300 else "B+" if activity >= 200 else "B" if activity >= 100 else "C"
 
           W, H = 760, 180
           pad = 26
-          svg = []
-          svg.append(f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
-          <rect x="10" y="10" width="{W-20}" height="{H-20}" rx="16" fill="#ffffff" stroke="#e5e7eb"/>
-          <text x="{pad}" y="44" font-family="Segoe UI, Arial" font-size="20" font-weight="700" fill="#2f80ed">{title}</text>
-          <text x="{pad}" y="78" font-family="Segoe UI, Arial" font-size="14" fill="#374151">Total Stars Earned:</text>
-          <text x="420" y="78" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="#111827">{fmt_k(total_stars)}</text>
-          <text x="{pad}" y="102" font-family="Segoe UI, Arial" font-size="14" fill="#374151">Total Commits (last year):</text>
-          <text x="420" y="102" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="#111827">{fmt_k(commits_last_year)}</text>
-          <text x="{pad}" y="126" font-family="Segoe UI, Arial" font-size="14" fill="#374151">Total PRs:</text>
-          <text x="420" y="126" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="#111827">{fmt_k(prs_total)}</text>
-          <text x="{pad}" y="150" font-family="Segoe UI, Arial" font-size="14" fill="#374151">Total Issues:</text>
-          <text x="420" y="150" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="#111827">{fmt_k(issues_total)}</text>
-          <circle cx="{W-120}" cy="95" r="44" fill="none" stroke="#2f80ed" stroke-width="10" opacity="0.35"/>
-          <text x="{W-120}" y="103" text-anchor="middle" font-family="Segoe UI, Arial" font-size="28" font-weight="800" fill="#111827">{grade}</text>
-          </svg>''')
+          accent = "#2f80ed"
+          border = "#e5e7eb"
+          text  = "#111827"
+          sub   = "#374151"
+
+          lines = [
+            ("Total Stars Earned:", fmt_k(total_stars)),
+            ("Total Commits (last year):", fmt_k(commits_last_year)),
+            ("Total PRs:", fmt_k(prs_total)),
+            ("Total Issues:", fmt_k(issues_total)),
+            ("Contributed to (last year):", fmt_k(repos_contrib_last_year)),
+          ]
+
+          y0, dy = 78, 24
+          svg = [f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
+          <rect x="10" y="10" width="{W-20}" height="{H-20}" rx="16" fill="#ffffff" stroke="{border}"/>
+          <text x="{pad}" y="44" font-family="Segoe UI, Arial" font-size="20" font-weight="700" fill="{accent}">{title}</text>
+          ''']
+
+          for i,(k,v) in enumerate(lines):
+            y = y0 + i*dy
+            svg.append(f'<circle cx="{pad+6}" cy="{y-5}" r="5" fill="{accent}" opacity="0.9"/>')
+            svg.append(f'<text x="{pad+26}" y="{y}" font-family="Segoe UI, Arial" font-size="14" fill="{sub}">{k}</text>')
+            svg.append(f'<text x="420" y="{y}" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="{text}">{v}</text>')
+
+          cx, cy = W-120, 95
+          svg.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="none" stroke="{accent}" stroke-width="10" opacity="0.35"/>')
+          svg.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="none" stroke="{accent}" stroke-width="10" stroke-dasharray="220 60" stroke-linecap="round"/>')
+          svg.append(f'<text x="{cx}" y="{cy+8}" text-anchor="middle" font-family="Segoe UI, Arial" font-size="28" font-weight="800" fill="{text}">{grade}</text>')
+          svg.append('</svg>')
 
           with open("simple-stats.svg", "w", encoding="utf-8") as f:
             f.write("\n".join(svg))
@@ -117,7 +136,7 @@ jobs:
           PY
 
           ls -la
-          git status --porcelain
+          test -f simple-stats.svg
 
       - name: Commit & push
         uses: EndBug/add-and-commit@v9
@@ -126,3 +145,4 @@ jobs:
           message: "chore: update simple stats card"
           default_author: github_actions
           push: true
+
