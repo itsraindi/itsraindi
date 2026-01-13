@@ -1,174 +1,25 @@
-name: Simple Stats Card
+name: Metrics
 on:
   schedule:
-    - cron: "0 3 * * *" # 每天更新一次（UTC 3点）
+    - cron: "0 3 * * *"   # 每天更新一次（UTC 3点）
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  metrics:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Generate stats card (SVG)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          USERNAME: itsraindi
-          TITLE: "Amemaru's GitHub Stats"
-        run: |
-          python - << 'PY'
-          import os, json, urllib.request
-          from datetime import datetime, timedelta, timezone
-
-          token = os.environ["GITHUB_TOKEN"]
-          username = os.environ.get("USERNAME", "").strip()
-          title = os.environ.get("TITLE", "GitHub Stats")
-
-          def gql(query, variables):
-            data = json.dumps({"query": query, "variables": variables}).encode("utf-8")
-            req = urllib.request.Request(
-              "https://api.github.com/graphql",
-              data=data,
-              headers={
-                "Authorization": f"bearer {token}",
-                "Content-Type": "application/json",
-                "User-Agent": "stats-card-generator"
-              }
-            )
-            with urllib.request.urlopen(req) as r:
-              return json.loads(r.read().decode("utf-8"))
-
-          now = datetime.now(timezone.utc)
-          frm = (now - timedelta(days=365)).isoformat()
-          to = now.isoformat()
-
-          query = """
-          query($login:String!, $from:DateTime!, $to:DateTime!, $after:String) {
-            user(login:$login) {
-              pullRequests { totalCount }
-              issues { totalCount }
-              contributionsCollection(from:$from, to:$to) {
-                totalCommitContributions
-                totalPullRequestContributions
-                totalIssueContributions
-                totalRepositoryContributions
-              }
-              repositories(ownerAffiliations: OWNER, isFork:false, first:100, after:$after) {
-                nodes { stargazerCount }
-                pageInfo { hasNextPage endCursor }
-              }
-            }
-          }
-          """
-
-          # paginate stars
-          total_stars = 0
-          after = None
-          prs_total = issues_total = 0
-          commits_last_year = prs_last_year = issues_last_year = repos_contrib_last_year = 0
-
-          while True:
-            res = gql(query, {"login": username, "from": frm, "to": to, "after": after})
-            if "errors" in res:
-              raise SystemExit("GraphQL error: " + json.dumps(res["errors"], indent=2))
-
-            u = res["data"]["user"]
-            prs_total = u["pullRequests"]["totalCount"]
-            issues_total = u["issues"]["totalCount"]
-            cc = u["contributionsCollection"]
-            commits_last_year = cc["totalCommitContributions"]
-            prs_last_year = cc["totalPullRequestContributions"]
-            issues_last_year = cc["totalIssueContributions"]
-            repos_contrib_last_year = cc["totalRepositoryContributions"]
-
-            repo = u["repositories"]
-            total_stars += sum(n["stargazerCount"] for n in repo["nodes"])
-            if not repo["pageInfo"]["hasNextPage"]:
-              break
-            after = repo["pageInfo"]["endCursor"]
-
-          def fmt_k(n):
-            if n >= 1000000:
-              return f"{n/1000000:.1f}M".replace(".0","")
-            if n >= 1000:
-              return f"{n/1000:.1f}k".replace(".0","")
-            return str(n)
-
-          # simple grade based on last-year activity
-          activity = commits_last_year + prs_last_year + issues_last_year
-          if activity >= 500: grade = "A+"
-          elif activity >= 300: grade = "A"
-          elif activity >= 200: grade = "B+"
-          elif activity >= 100: grade = "B"
-          elif activity >= 50: grade = "C"
-          else: grade = "D"
-
-          # SVG layout
-          W, H = 760, 180
-          pad = 26
-          title_color = "#2f80ed"
-          text_color = "#111827"
-          sub_color = "#374151"
-          card_bg = "#ffffff"
-          border = "#e5e7eb"
-          accent = "#2f80ed"
-
-          lines = [
-            ("Total Stars Earned:", fmt_k(total_stars)),
-            ("Total Commits (last year):", fmt_k(commits_last_year)),
-            ("Total PRs:", fmt_k(prs_total)),
-            ("Total Issues:", fmt_k(issues_total)),
-            ("Contributed to (last year):", fmt_k(repos_contrib_last_year)),
-          ]
-
-          # icons as simple bullets
-          icon_x = pad + 6
-          label_x = pad + 26
-          value_x = 420
-          start_y = 66
-          dy = 24
-
-          svg = []
-          svg.append(f'''<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}">
-            <defs>
-              <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-                <feDropShadow dx="0" dy="2" stdDeviation="6" flood-color="#000000" flood-opacity="0.12"/>
-              </filter>
-            </defs>
-            <rect x="10" y="10" width="{W-20}" height="{H-20}" rx="16" fill="{card_bg}" stroke="{border}" filter="url(#shadow)"/>
-            <text x="{pad}" y="44" font-family="Segoe UI, Arial" font-size="20" font-weight="700" fill="{title_color}">{title}</text>
-          ''')
-
-          # stat rows
-          for i, (k, v) in enumerate(lines):
-            y = start_y + i*dy
-            svg.append(f'<circle cx="{icon_x}" cy="{y-5}" r="5" fill="{accent}" opacity="0.9"/>')
-            svg.append(f'<text x="{label_x}" y="{y}" font-family="Segoe UI, Arial" font-size="14" fill="{sub_color}">{k}</text>')
-            svg.append(f'<text x="{value_x}" y="{y}" font-family="Segoe UI, Arial" font-size="14" font-weight="700" fill="{text_color}">{v}</text>')
-
-          # grade circle on right
-          cx, cy = W-120, 95
-          svg.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="none" stroke="{accent}" stroke-width="10" opacity="0.35"/>')
-          svg.append(f'<circle cx="{cx}" cy="{cy}" r="44" fill="none" stroke="{accent}" stroke-width="10" stroke-dasharray="220 60" stroke-linecap="round"/>')
-          svg.append(f'<text x="{cx}" y="{cy+8}" text-anchor="middle" font-family="Segoe UI, Arial" font-size="28" font-weight="800" fill="{text_color}">{grade}</text>')
-          svg.append('</svg>')
-
-          out_dir = "assets"
-          os.makedirs(out_dir, exist_ok=True)
-          out_path = os.path.join(out_dir, "simple-stats.svg")
-          with open(out_path, "w", encoding="utf-8") as f:
-            f.write("\n".join(svg))
-
-          print("Wrote", out_path)
-          PY
-
-      - name: Commit SVG
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/simple-stats.svg
-          git diff --cached --quiet || git commit -m "chore: update simple stats card"
-          git push
+      - uses: lowlighter/metrics@latest
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          user: itsraindi
+          template: classic
+          base: header, activity, community, repositories
+          plugin_languages: yes
+          plugin_isocalendar: yes
+          plugin_isocalendar_duration: half-year
+          filename: github-metrics.svg
+          output_action: commit
+          committer_branch: main
