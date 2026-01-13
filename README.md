@@ -23,7 +23,7 @@ A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>
 
 ## Now
 - 🔭 Working with **Team Midnight Umbrella**
-- 🌱 Learning **Unity Engine & Java/Android Studio & Japanese**
+- 🌱 Learning **Unity Engine & Java & Japanese**
 - 🤝 Looking to collaborate on **Game Design (UofA CMPUT 250)**
 - 💬 Ask me about **anything**
 - 📫 Reach me at **contact@ame.best**
