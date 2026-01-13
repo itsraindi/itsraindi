@@ -75,7 +75,7 @@ A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>
   </a>
   <img src="https://img.shields.io/badge/%E8%AE%A8%E5%8E%8C-%E5%AD%A6%E4%B9%A0-yellow" alt="讨厌 学习" />
   <img src="https://img.shields.io/badge/%E6%80%A7%E6%A0%BC-%E5%BC%80%E6%9C%97-red" alt="性格 开朗" />
-  <img src="https://img.shields.io/badge/%E7%88%B1%E5%A5%BD-%E4%BA%8C%E6%AC%A1%E5%85%83-red" alt="爱好 二次元" />
+  <img src="https://img.shields.io/badge/%E7%88%B1%E5%A5%BD-%E4%BA%8C%E6%AC%A1%E5%85%83-pink" alt="爱好 二次元" />
 </p>
 
 <!-- Optional: put your avatar here (make sure the file exists in this repo)
