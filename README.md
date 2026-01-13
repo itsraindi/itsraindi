@@ -45,8 +45,19 @@ A tech enthusiast from Vancouver who loves diving into <b>Python</b>, <b>C++</b>
 ## GitHub Stats
 <div align="center">
 
-<img src="https://github-readme-stats.vercel.app/api?username=itsraindi&show_icons=true&hide_border=true" height="150" />
-<img src="https://github-readme-streak-stats.herokuapp.com?user=itsraindi&hide_border=true" height="150" />
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+          srcset="https://github-readme-stats.vercel.app/api?username=itsraindi&show_icons=true&hide_border=true&theme=tokyonight&cache_seconds=86400" />
+  <img height="160"
+       src="https://github-readme-stats.vercel.app/api?username=itsraindi&show_icons=true&hide_border=true&cache_seconds=86400" />
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+          srcset="https://streak-stats.demolab.com?user=itsraindi&hide_border=true&theme=tokyonight" />
+  <img height="160"
+       src="https://streak-stats.demolab.com?user=itsraindi&hide_border=true" />
+</picture>
 
 </div>
 
