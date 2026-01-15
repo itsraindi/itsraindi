@@ -27,7 +27,7 @@ Friends are welcome, 欢迎扩列，友達追加を歓迎します!
 - 🔭 Working with **Team Midnight Umbrella**
 - 🌱 Learning **Unity Engine & Java & Japanese**
 - 🤝 Looking to collaborate on **Game Design**
-- 💬 Ask me about **ANything you like**
+- 💬 Ask me about **Anything you like**
 - 📫 Reach me at **contact@ame.best**
 </td>
 
