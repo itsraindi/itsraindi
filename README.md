@@ -26,7 +26,7 @@ Friends are welcome, 欢迎扩列，友達追加を歓迎します!
 ## Now
 - 🔭 Working with **Team Midnight Umbrella**
 - 🌱 Learning **Unity Engine & Java & Japanese**
-- 🤝 Looking to collaborate on **Game Design (UofA CMPUT 250)**
+- 🤝 Looking to collaborate on **Game Design**
 - 💬 Ask me about **anything**
 - 📫 Reach me at **contact@ame.best**
 </td>
