@@ -9,11 +9,11 @@
   
     <circle cx="34" cy="120" r="5" fill="#2f80ed" opacity="0.9"/>
     <text x="54" y="126" font-family="Segoe UI, Arial" font-size="16" fill="#374151">Total Commits (last year):</text>
-    <text x="360" y="126" font-family="Segoe UI, Arial" font-size="16" font-weight="800" fill="#111827">87</text>
+    <text x="360" y="126" font-family="Segoe UI, Arial" font-size="16" font-weight="800" fill="#111827">100</text>
   
     <circle cx="34" cy="150" r="5" fill="#2f80ed" opacity="0.9"/>
     <text x="54" y="156" font-family="Segoe UI, Arial" font-size="16" fill="#374151">Total PRs:</text>
-    <text x="360" y="156" font-family="Segoe UI, Arial" font-size="16" font-weight="800" fill="#111827">3</text>
+    <text x="360" y="156" font-family="Segoe UI, Arial" font-size="16" font-weight="800" fill="#111827">6</text>
   
     <circle cx="34" cy="180" r="5" fill="#2f80ed" opacity="0.9"/>
     <text x="54" y="186" font-family="Segoe UI, Arial" font-size="16" fill="#374151">Total Issues:</text>
