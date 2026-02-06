@@ -21,7 +21,7 @@
   
     <circle cx="34" cy="210" r="5" fill="#2f80ed" opacity="0.9"/>
     <text x="54" y="216" font-family="Segoe UI, Arial" font-size="16" fill="#374151">Contributed to (last year):</text>
-    <text x="360" y="216" font-family="Segoe UI, Arial" font-size="16" font-weight="800" fill="#111827">6</text>
+    <text x="360" y="216" font-family="Segoe UI, Arial" font-size="16" font-weight="800" fill="#111827">7</text>
   
 
     <circle cx="445" cy="135" r="52" fill="none" stroke="#2f80ed" stroke-width="10" opacity="0.25"/>
